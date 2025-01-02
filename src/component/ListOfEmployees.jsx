@@ -19,6 +19,8 @@ function addNewEmployee(event){
     navigate('/add-employee');
 }
 
+
+
 return (
     <div className='container'>
         <div className='mt-2 d-flex justify-content-between align-items-center mb-2'>
