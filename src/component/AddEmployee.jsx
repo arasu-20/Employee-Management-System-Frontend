@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { createEmployee } from '../services/EmployeeService';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { createEmployee, getEmployee, updateEmployee } from '../services/EmployeeService';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
 const AddEmployeeComponent = () => {
@@ -10,8 +10,32 @@ const AddEmployeeComponent = () => {
         email:''
     });
     const [showAlert, setShowAlert] = useState(false);
-
     const navigate = useNavigate()
+    const {id} = useParams();
+    
+    function pageHeader(){
+        return (
+        <h3 className="text-center mt-2">
+            {id ? "Update Employee" : "Add Employee"}
+        </h3>
+    );
+    }
+
+    useEffect(()=>{
+        if(id){
+            getEmployee(id).then((response)=>{
+                setAddEmployee(response.data)
+            }).catch(error =>{
+                console.error(error)
+            })
+        }
+    },[id])
+    useEffect(() => {
+        if (showAlert) {
+            const timer = setTimeout(() => setShowAlert(false), 3000); // 3 seconds
+            return () => clearTimeout(timer);
+        }
+    }, [showAlert]);
 
         const [validate, setValidate] = useState({
             firstName:'',
@@ -19,28 +43,12 @@ const AddEmployeeComponent = () => {
             email:''
         });
     
-
     function handleAll(event){
         const {name, value} = event.target;
         setAddEmployee({
             ...addEmployee,
             [name]: value
         })
-    }
-
-    function saveEmployee(event){
-        event.preventDefault();
-        if(validateForm()){
-            createEmployee(addEmployee).then((response) =>{
-                console.log(response.data);
-                setShowAlert(!showAlert);
-                setAddEmployee({
-                    firstName:'',
-                    lastName:'',
-                    email:''
-                });
-            })
-        }
     }
 
     function validateForm(){
@@ -60,7 +68,7 @@ const AddEmployeeComponent = () => {
             valid = false;
         }
     
-        if(addEmployee.email.trim()){
+        if(/^\S+@\S+\.\S+$/.test(addEmployee.email)){
             errors.email = '';
         }else{
             errors.email = 'Email is Required';
@@ -71,12 +79,47 @@ const AddEmployeeComponent = () => {
         return valid;
     }
 
+    function saveOrUpdateEmployee(event){
+        event.preventDefault();
+        if(validateForm()){
+            if(id){
+                updateEmployee(id, addEmployee).then((response)=>{
+                    setShowAlert(true);
+                }).catch(error=>{
+                    console.error(error);
+                    alert("Failed to Update!")
+                })
+            }else{
+                createEmployee(addEmployee).then((response) =>{
+                    setShowAlert(true);
+                    setAddEmployee({
+                        firstName:'',
+                        lastName:'',
+                        email:''
+                    });
+                }).catch(error=>{
+                    console.error(error);
+                    alert("Failed to Add!")
+                })
+            }
+        }
+    }
+
+
 return (
     <div>
         <div className="container">
             <div className="row">
-            {
+            {id?
                 showAlert && <div className="alert alert-info alert-dismissible fade show" role="alert">
+                    Employee Updated Successfully!
+                    <button
+            type="button"
+            className="btn-close"
+            aria-label="Close"
+            onClick={() => setShowAlert(false)}
+          ></button>
+          </div>: showAlert && <div className="alert alert-info alert-dismissible fade show" role="alert">
                     Employee Added Successfully!
                     <button
             type="button"
@@ -87,7 +130,9 @@ return (
           </div>
             }
                 <div className="card mt-5">
-                    <h3 className='text-center mt-2'>Add Employee</h3>
+                    {
+                        pageHeader()
+                    }
                     <div className="card-body">
                         <form action="">
                             <div className="form-group mb-2">
@@ -127,7 +172,7 @@ return (
                             </div>
                             <div className="form-group d-flex justify-content-end text-align-center">
                                 <button className="btn btn-secondary me-2" onClick={()=>navigate('/')}>Cancel</button>
-                                <button className="btn btn-success" onClick={saveEmployee}>Submit</button>
+                                <button className="btn btn-success" onClick={saveOrUpdateEmployee}>Save</button>
                             </div>
                         </form>
                     </div>

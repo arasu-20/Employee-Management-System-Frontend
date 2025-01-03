@@ -22,8 +22,8 @@ return (
             <nav className='navbar navbar-dark bg-dark'>
                         <a className='navbar-brand ps-3' href="#">Employee Management System</a>
                     <div>
-                    <button type='button' className='btn btn-primary add-button' onClick={addNewEmployee}>Add Employee</button>
-                    <button type='button' className='btn btn-info m-2' onClick={showEmployee}>Show Employees</button>
+                    <button type='button' className='btn btn-success add-button' onClick={addNewEmployee}>Add Employee</button>
+                    <button type='button' className='btn btn-primary m-2' onClick={showEmployee}>Show Employees</button>
                     </div>
             </nav>
             </header>
