@@ -1,13 +1,32 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
+
+
 
 const HeaderComponent = () => {
+
+    const navigate = useNavigate();
+
+    function addNewEmployee(event){
+        event.preventDefault();
+        navigate('/add-employee');
+    }
+
+    function showEmployee(event){
+        event.preventDefault();
+        navigate('/employees');
+    }
 return (
     <div>
-        <header className='position-sticky top-0'>
+        <header>
             <nav className='navbar navbar-dark bg-dark'>
-                <a className='navbar-brand ps-3' href="#">Employee Management System</a>
+                        <a className='navbar-brand ps-3' href="#">Employee Management System</a>
+                    <div>
+                    <button type='button' className='btn btn-primary add-button' onClick={addNewEmployee}>Add Employee</button>
+                    <button type='button' className='btn btn-info m-2' onClick={showEmployee}>Show Employees</button>
+                    </div>
             </nav>
-        </header>
+            </header>
     </div>
 )
 }

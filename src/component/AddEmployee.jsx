@@ -9,6 +9,8 @@ const AddEmployeeComponent = () => {
         lastName:'',
         email:''
     });
+    const [showAlert, setShowAlert] = useState(false);
+
     const navigate = useNavigate()
 
         const [validate, setValidate] = useState({
@@ -31,7 +33,12 @@ const AddEmployeeComponent = () => {
         if(validateForm()){
             createEmployee(addEmployee).then((response) =>{
                 console.log(response.data);
-                navigate('/employees')
+                setShowAlert(!showAlert);
+                setAddEmployee({
+                    firstName:'',
+                    lastName:'',
+                    email:''
+                });
             })
         }
     }
@@ -68,6 +75,17 @@ return (
     <div>
         <div className="container">
             <div className="row">
+            {
+                showAlert && <div className="alert alert-info alert-dismissible fade show" role="alert">
+                    Employee Added Successfully!
+                    <button
+            type="button"
+            className="btn-close"
+            aria-label="Close"
+            onClick={() => setShowAlert(false)}
+          ></button>
+          </div>
+            }
                 <div className="card mt-5">
                     <h3 className='text-center mt-2'>Add Employee</h3>
                     <div className="card-body">
@@ -108,7 +126,7 @@ return (
                                 }
                             </div>
                             <div className="form-group d-flex justify-content-end text-align-center">
-                                <button className="btn btn-secondary me-2">Cancel</button>
+                                <button className="btn btn-secondary me-2" onClick={()=>navigate('/')}>Cancel</button>
                                 <button className="btn btn-success" onClick={saveEmployee}>Submit</button>
                             </div>
                         </form>
